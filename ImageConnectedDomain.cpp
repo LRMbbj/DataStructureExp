@@ -17,9 +17,15 @@ Position Neighboor(Position index, int id, int N) // 返回相邻坐标
 	int xx, yy;
 	xx = index.x + dir[id][0];
 	yy = index.y + dir[id][1];
+	Position res;
+	res.x = -1;
+	res.y = -1;
 	if(xx >= 0 && xx < N && yy >= 0 && yy < N)
-		return Position(xx,yy);
-	else return Position(NULL,NULL);
+	{
+		res.x = xx;
+		res.y = yy;
+	}
+	return res;
 }
 int FindBlack(bool **graph, Position *list, int n) //搜索所有黑块
 {
@@ -61,7 +67,7 @@ void MarkingGroup(int N, bool **orgGraph, Position *list, int num, int **groupGr
 			for (int id = 0; id < 8; id++)
 			{
 				Position neighboor = Neighboor(nowPos, id, N);
-				if(neighboor.x == NULL) continue;
+				if(neighboor.y == -1) continue;
 				if(orgGraph[neighboor.x][neighboor.y]) group.push(neighboor);
 			}
 			// 将相邻黑块入队
