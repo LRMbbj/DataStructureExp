@@ -1,12 +1,16 @@
+#include<fstream>
 #include<iostream>
 #include<queue>
 
 #define SIZE 7
+#define ID_NUM 4
 
 using namespace std;
 
-const short dir[8][2] = {{-1,-1},{0,-1},{1,-1},{-1,0}
-,{1,0},{-1,1},{0,1},{1,1}};
+// const short dir[8][2] = {{-1,-1},{0,-1},{1,-1},{-1,0}
+// ,{1,0},{-1,1},{0,1},{1,1}};
+const short dir[4][2] = {{0,-1},{-1,0}
+,{1,0},{0,1}};
 
 struct Position
 {
@@ -52,25 +56,33 @@ void MarkingGroup(int N, bool **orgGraph, Position *list, int num, int **groupGr
 {
 	queue<Position> group;
 	int groupNum = 1;
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < num; i++)
 	{
 		Position pos = list[i];
-		if(!groupGraph[pos.x][pos.y]) continue;//剔除已分组的黑块
+		if(groupGraph[pos.x][pos.y]) continue;//剔除已分组的黑块
 		group.push(pos);// 将黑块入队
+		printf_s("未搜索黑块入队 %d,%d\n", pos.x, pos.y);
+		groupGraph[pos.x][pos.y] = groupNum;
 		while ( !group.empty() )// 判断是否还有黑块
 		{
 			Position nowPos = group.front();
 			group.pop();
-			// 标记出队黑块
-			groupGraph[nowPos.x][nowPos.y] = groupNum;
-			// 寻找相邻黑块
-			for (int id = 0; id < 8; id++)
+			printf_s("搜索邻居 %d,%d\n", nowPos.x, nowPos.y);
+			for (int id = 0; id < ID_NUM; id++)// 寻找相邻黑块
 			{
 				Position neighboor = Neighboor(nowPos, id, N);
-				if(neighboor.y == -1) continue;
-				if(orgGraph[neighboor.x][neighboor.y]) group.push(neighboor);
+
+				if( neighboor.y == -1 || groupGraph[neighboor.x][neighboor.y] ) // 跳过无效位置和已搜索过的位置
+					continue;
+
+				if(orgGraph[neighboor.x][neighboor.y]) 
+				{
+					printf_s(">>黑块入队 %d,%d\n", neighboor.x, neighboor.y);
+					group.push(neighboor); // 将相邻黑块入队
+					groupGraph[neighboor.x][neighboor.y] = groupNum; // 标记入队黑块
+				}
 			}
-			// 将相邻黑块入队
+
 			// 无相邻黑块后出队
 		}// 已搜索完
 		// 组+1
@@ -80,32 +92,36 @@ void MarkingGroup(int N, bool **orgGraph, Position *list, int num, int **groupGr
 
 int main()
 {
+	ifstream fin;
+	ofstream fout;
+	fin.open("input.in",ios::in);
+	fout.open("output.out",ios::out);
+
 	int n;
-	cin >> n;
+	fin >> n;
 	bool **graph;
 	int **res;
+	char input[100];
 	graph = new bool *[n];
 	res = new int *[n];
 	for (int i = 0;i<n;i++)
 	{
-		char *input;
-		graph[i] = new bool[n];
-		res[i] = new int[n];
-		input = new char[n];
-		cin >> input;
+		graph[i] = new bool[n]();
+		res[i] = new int[n]();
+		fin >> input;
 		for (int j = 0; j<n; j++)
 			graph[i][j] = input[j] - '0';
-		delete[] input;
 	}
-	Position *blackList = new Position[n*n];
+
+	Position *blackList = new Position[n*n]();
 	int blackNum = FindBlack(graph, blackList, n);
 	MarkingGroup(n, graph, blackList, blackNum, res);
-	cout<<endl;
+
 	for (int i = 0;i<n;i++)
 	{
 		for (int j = 0; j<n; j++)
-			cout<<res[i][j];
-		cout<<endl;
+			fout<<res[i][j];
+		fout<<endl;
 		delete [] graph[i];
 		delete [] res[i];
 	}
@@ -114,5 +130,9 @@ int main()
 	delete [] graph;
 	delete [] blackList;
 
+	fin.close();
+	fout.close();
+
 	return 0;
+
 }
