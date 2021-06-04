@@ -88,12 +88,14 @@ int main()
 	res = new int *[n];
 	for (int i = 0;i<n;i++)
 	{
-		char* input;
+		char *input;
 		graph[i] = new bool[n];
 		res[i] = new int[n];
+		input = new char[n];
 		cin >> input;
 		for (int j = 0; j<n; j++)
 			graph[i][j] = input[j] - '0';
+		delete[] input;
 	}
 	Position *blackList = new Position[n*n];
 	int blackNum = FindBlack(graph, blackList, n);
@@ -104,6 +106,13 @@ int main()
 		for (int j = 0; j<n; j++)
 			cout<<res[i][j];
 		cout<<endl;
+		delete [] graph[i];
+		delete [] res[i];
 	}
+
+	delete [] res;
+	delete [] graph;
+	delete [] blackList;
+
 	return 0;
 }
