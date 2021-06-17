@@ -26,9 +26,9 @@ template<class T>
 void LinkStack<T>::Push(T data)
 {
 	Node<T> *next = new Node<T>();
-	next->data = data;
-	next->next = top;
-	top = next;
+	next->data = data; //添加数据
+	next->next = top; //指向原栈顶
+	top = next;	//更新栈顶
 }
 template<class T>
 LinkStack<T>::~LinkStack()
@@ -43,11 +43,11 @@ LinkStack<T>::~LinkStack()
 template<class T>
 T LinkStack<T>::Pop()
 {
-	if(top != NULL)
+	if(top != NULL) // 判断栈非空，否则下溢
 	{
-		T data = top->data;
-		Node<T> *p = top;
-		top = top->next;
+		T data = top->data; //暂存数据
+		Node<T> *p = top; 
+		top = top->next; //修改栈顶指针
 		delete p;
 		return data;
 	}

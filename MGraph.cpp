@@ -11,6 +11,7 @@ public:
 	MGraph(int ver, T v[], int arc, int a[][2]);
 	void DFS(int v);
 	void BFS(int v);
+	bool IsConnected(int v1,int v2);
 private:
 	T vertex[MAXSIZE] = {0};
 	bool arc[MAXSIZE][MAXSIZE] = {0};
@@ -38,22 +39,22 @@ void MGraph<T>::DFS(int v)
 	stack<int> vistedNodes;
 	int now;
 
-	cout<<vertex[v]<<endl;
-	vistedNodes.push(v);
-	visted[v] = true;
+	cout<<vertex[v]<<endl; //输出第一个节点
+	vistedNodes.push(v); //第一个节点入栈
+	visted[v] = true; //标记已访问第一个节点
 
 	while (!vistedNodes.empty())
 	{
-		now = vistedNodes.top();
+		now = vistedNodes.top(); //从栈顶开始搜索
 		for (int i = 0; i < vNum; i++)
-			if (!visted[i] && arc[now][i])
+			if (!visted[i] && arc[now][i]) //有可前进的节点，记录并输出
 			{
 				cout<<vertex[i]<<endl;
 				vistedNodes.push(i);
 				visted[i] = true;
 				break;
 			}
-		if (now == vistedNodes.top())
+		if (now == vistedNodes.top()) //如果没有前进则回退
 		{
 			vistedNodes.pop();
 		}
@@ -67,22 +68,26 @@ void MGraph<T>::BFS(int v)
 	int now;
 
 	vistedNodes.push(v);
-	visted[v] = true;
+	visted[v] = true; //起点节点入队并标记
 
-	while(!vistedNodes.empty())
+	while(!vistedNodes.empty()) //队列为空代表遍历完成
 	{
-		now = vistedNodes.front();
+		now = vistedNodes.front(); //队列首元素出队
 		vistedNodes.pop();
-		cout<<vertex[now]<<endl;
+		cout<<vertex[now]<<endl; //遍历队首元素
 		for(int i=0;i<vNum;i++)
-			if(!visted[i] && arc[now][i])
+			if(!visted[i] && arc[now][i]) //将所有该节点未标记的联通节点都入队
 			{
 				vistedNodes.push(i);
 				visted[i] = true;
 			}
 	}
 }
-
+template<class T>
+bool MGraph<T>::IsConnected(int v1,int v2)
+{
+	return arc[v1][v2];
+}
 int main()
 {
 	int v[6] = {1,2,3,4,5,6};
@@ -93,7 +98,8 @@ int main()
 	graph->DFS(0);
 	cout<<"\nBFS:\n";
 	graph->BFS(0);
-
+	cout<<"\nConnected(0->1)?";
+	cout<<graph->IsConnected(0,1)<<endl;
 	delete graph;
 
 }
