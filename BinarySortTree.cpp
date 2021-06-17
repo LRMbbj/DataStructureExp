@@ -113,7 +113,7 @@ void BST<T>::ReleaseNode(BiNode<T> *&R)
 		return;
 	ReleaseNode(R->lch);
 	ReleaseNode(R->rch);
-	cout<<"Releasing Node:"<<R->data<<endl;
+	// cout<<"Releasing Node:"<<R->data<<endl;
 	delete R;
 
 }
